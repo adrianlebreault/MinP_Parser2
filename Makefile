@@ -1,6 +1,6 @@
 default:
-	bison -yd parse.y
-	flex -l lexer.l
+	bison -yd parser.y
+	flex -l PI1Scanner.l
 	g++ -o test y.tab.c lex.yy.c main.cpp -lm
 
 clear:
