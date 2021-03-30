@@ -1,9 +1,35 @@
 %{
-#include <stdio.h>
-//#include "Tokens.h"
+#include <bits/stdc++.h>
 
+using namespace std;
+
+enum TipoEnum{
+	Integer,
+	Real,
+	String,
+	Procedure
+};
+
+struct registro{
+
+	TipoEnum tipo;
+	int nivel;
+};
+
+extern int yylineno;
 int yylex();
 int yyerror(char *s);
+int error(char *s);
+short setType(short xtype, short ytype);
+int nivel;
+bool declaration = false;
+
+
+stringstream ss;
+multimap<string,registro> SymTab, BUSymTab;
+multimap<string,registro>::iterator oit;
+map<string,registro> ProcTab;
+vector<string> declares, uses, declerrors, typerrors;
 
 %}
 
@@ -54,6 +80,16 @@ int yyerror(char *s);
 %token _COMMENT 79
 %token _ERROR 80 
 
+%type <sval> _ID
+%type <tipo> expr term fac val ids it _RCONST _ICONST _ECONST _INTEGER _STRING _LITERAL
+
+%union {
+
+	short tipo;
+	char *sval;
+	
+}
+
 %start program
 
 %%
@@ -63,11 +99,19 @@ program:
 ;
 
 title:
-	_PROGRAM _ID { printf("Regla title\n"); }
+	_PROGRAM _ID {nivel = 0;}
 ;
 
 block:
-	vars _ENDVARS procs _ENDPROCS code { printf("Regla block\n"); }
+	vars { nivel++; } _ENDVARS procs _ENDPROCS code {oit = SymTab.begin();
+														while(oit != SymTab.end())
+														{
+															if(oit->second.nivel == nivel) SymTab.erase(oit);
+
+															oit++;
+														}
+														nivel--; 
+													}
 ;
 
 vars:
@@ -83,13 +127,59 @@ varlist:
 ;
 
 vardef:
-	_ID _COLON _INTEGER		{ printf("Regla vardef\n"); }
+	_ID _COLON _INTEGER		{ if(declaration){
+									registro newreg;
+									newreg.tipo = Integer;
+									newreg.nivel = nivel;
+									SymTab.insert(pair<string,registro>(yyval.sval,newreg));
+									oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									ss <<  "En linea: " << yylineno << " se declaro Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+									declares.push_back(ss.str());
+									cout << ss.str();
+									ss.str(string());
+								} 
+							}
 |
-	_ID _COLON _REAL
+	_ID _COLON _REAL		{if(declaration){
+									registro newreg;
+									newreg.tipo = Real;
+									newreg.nivel = nivel;
+									SymTab.insert(pair<string,registro>(yyval.sval,newreg));
+									oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									ss <<  "En linea: " << yylineno << " se declaro Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+									declares.push_back(ss.str());
+									cout << ss.str();
+									ss.str(string());}
+							}
 |
-	_ID _COLON _INTEGER bnl
+	_ID _COLON _INTEGER bnl {if(declaration){
+									registro newreg;
+									newreg.tipo = Integer;
+									newreg.nivel = nivel;
+									SymTab.insert(pair<string,registro>(yyval.sval,newreg));
+									oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									ss <<  "En linea: " << yylineno << " se declaro Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+									declares.push_back(ss.str());
+									cout << ss.str();
+									ss.str(string());}
+							}
 |
-	_ID _COLON _STRING
+	_ID _COLON _STRING {
+								if(declaration){
+									registro newreg;
+									newreg.tipo = String;
+									newreg.nivel = nivel;
+									SymTab.insert(pair<string,registro>(yyval.sval,newreg));
+									oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									ss <<  "En linea: " << yylineno << " se declaro Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+									declares.push_back(ss.str());
+									cout << ss.str();
+									ss.str(string());}
+						}
 ;
 
 bnl:
@@ -119,9 +209,31 @@ procdef:
 ;
 
 ptittle:
-	_PROC _ID _LPAREN varlist _RPAREN	{ printf("Regla ptittle \n"); }
+	_PROC _ID _LPAREN 	{ declaration = true; }
+	varlist _RPAREN	{ registro newreg;
+						newreg.tipo = Procedure;
+						newreg.nivel = nivel;
+						ProcTab.insert(pair<string,registro>($2,newreg));
+						oit = ProcTab.upper_bound($2);
+						oit--;
+						ss <<  "En linea: " << yylineno << " se declaro Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+						declares.push_back(ss.str());
+						cout << ss.str();
+						ss.str(string()); 
+					}
 |
-	_PROC _ID _LPAREN _RPAREN
+	_PROC _ID _LPAREN _RPAREN {
+								registro newreg;
+								newreg.tipo = Procedure;
+								newreg.nivel = nivel;
+								ProcTab.insert(pair<string,registro>($2,newreg));
+								oit = ProcTab.upper_bound($2);
+								oit--;
+								ss <<  "En linea: " << yylineno << " se declaro Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+								declares.push_back(ss.str());
+								cout << ss.str();
+								ss.str(string());
+							  }
 ;
 
 code:
@@ -155,41 +267,68 @@ assign:
 ;
 
 expr:
-	expr _PLUS term				{ printf("Regla expr\n"); }
+	expr _PLUS term				{ $$ = setType($1,$3); }
 |
-	expr _MINUS term
+	expr _MINUS term			{$$ = setType($1,$3);}
 |
-	term
+	term		{$$ = $1;}
 ;
 
 term:
-	term _MULT fac				{ printf("Regla term\n"); }
+	term _MULT fac				{ $$ = setType($1, $3); }
 |
-	term _DIVIDE fac
+	term _DIVIDE fac			{ $$ = setType($1,$3); }
 |
-	fac
+	fac			{ $$=$1; }
 ;
 
 fac:
-	val							{ printf("Regla fac\n"); }
+	val							{ $$ = $1; }
 |
-	_LPAREN expr _RPAREN
+	_LPAREN expr _RPAREN		{ $$ = $2; }
 ;
 
 val:
-	ids							{ printf("Regla val\n"); }
+	ids							{ $$ = $1; }
 |
-	_ID _LPAREN vallist _RPAREN
+	_ID _LPAREN vallist _RPAREN {oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									if(oit->first != yyval.sval) { error(yyval.sval); }
+									else { 	$$ = oit->second.tipo;
+											ss <<  "En linea:" << yylineno << " se uso Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+											uses.push_back(ss.str());
+											cout << ss.str();
+											ss.str(string());
+										 }
+								}
 |
-	_RCONST
+	_RCONST 	{ $$ = $1; }
 |
-	_ICONST
+	_ICONST		{ $$ = $1; }
 ;
 
 ids:
-	_ID							{ printf("Regla ids\n"); }
+	_ID			{ 	oit = SymTab.upper_bound(yyval.sval);
+					oit--;
+					if(oit->first != yyval.sval) { error(yyval.sval); }
+					else { 	$$ = oit->second.tipo;
+							ss <<  "En linea:" << yylineno << " se uso Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+					 		uses.push_back(ss.str());
+							cout << ss.str();
+							ss.str(string());
+					 } 
+				}
 |
-	_ID _LBRACK vallist _RBRACK
+	_ID _LBRACK vallist _RBRACK {	oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									if(oit->first != yyval.sval) { error(yyval.sval); }
+									else { 	$$ = oit->second.tipo;
+											ss <<  "En linea:" << yylineno << " se uso Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+					 						uses.push_back(ss.str());
+											cout << ss.str();
+											ss.str(string());
+					 }
+					 }
 ;
 
 vallist:
@@ -199,9 +338,18 @@ vallist:
 ;
 
 it:
-	_ID							{ printf("Regla it\n"); }
+	_ID							{ 	oit = SymTab.upper_bound(yyval.sval);
+									oit--;
+									if(oit->first != yyval.sval) { error(yyval.sval); }
+									else { 	$$ = oit->second.tipo;
+											ss <<  "En linea:" << yylineno << " se uso Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl;
+					 						uses.push_back(ss.str());
+											cout << ss.str();
+											ss.str(string());
+					 					} 
+					 			}
 |
-	_ICONST
+	_ICONST { $$=$1; }
 ;
 
 cond:
@@ -227,11 +375,25 @@ loop:
 ;
 
 input:
-	_READ _LPAREN _ID _RPAREN	{ printf("Regla input\n"); }
+	_READ _LPAREN _ID _RPAREN	{ oit = SymTab.find($3);
+								if(oit->first != $3) { error($3); }
+								else {	cout <<  "En linea:" << yylineno << " se uso Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl; 
+										uses.push_back(ss.str());
+										cout << ss.str();
+										ss.str(string());
+									 } 
+								}
 ;
 
 output:
-	_WRITE  _LPAREN _ID _RPAREN	{ printf("Regla output\n"); }
+	_WRITE  _LPAREN _ID _RPAREN	{ 				oit = SymTab.find($3);
+												if(oit->first != $3) { error($3); }
+												else {	ss <<  "En linea:" << yylineno << " se uso Key: "<< oit->first << " tipo: " << oit->second.tipo << " nivel: "<< oit->second.nivel<<endl; 
+														uses.push_back(ss.str());
+														cout << ss.str();
+														ss.str(string());	
+									 				} 
+								}
 |
 	_WRITE  _LPAREN _LITERAL  _RPAREN
 ;
@@ -240,7 +402,74 @@ output:
 
 int yyerror(char *s)
 {
-	printf("Syntax Error on line:%s\n",s);
+	cout << "Syntax Error on line " << yylineno << endl;
+	
 	return 0;
 }
 
+int error(char *s)
+{
+
+	ss << "Error semantico, variable " << s << " no declarada en la linea " << yylineno << endl;
+	declerrors.push_back(ss.str());
+	cout << ss.str();
+	ss.str(string());
+	
+	return 0;
+}
+
+string getType(short x)
+{
+	switch(x)
+	{
+		case Integer: 
+				return strdup("Integer");
+				break;
+		case Real: 
+				return strdup("Real");
+				break;
+		case String: 
+				return strdup("String");
+				break;
+		case Procedure: 
+				return strdup("Procedure");
+				break;
+		default: return strdup("Undefined");
+					break;
+
+	}
+}
+
+void typeError(short xtype, short ytype){
+
+	string tipo1 = getType(xtype);
+	string tipo2 = getType(ytype);
+
+	ss << "Type error line " << yylineno << " type " << tipo1 << " missmatch " << tipo2 << endl;
+	typerrors.push_back(ss.str());
+	cout << ss.str();
+	ss.str(string());
+
+}
+
+short setType(short xtype, short ytype)
+{
+	if(xtype <= 2) 
+	switch(xtype)
+	{
+		case Integer:	if(ytype == 0) return 0;
+				else if(ytype == 1) return 1;
+				else typeError(xtype, ytype);
+				break;
+
+		case Real:	if(ytype == 0) return 1;
+				else if(ytype == 1) return 1;
+				else typeError(xtype, ytype);
+				break;
+		case String:	if(ytype == 2) return 2;
+				else typeError(xtype, ytype);
+				break;
+	}
+
+	else{typeError(xtype, ytype);}
+}
