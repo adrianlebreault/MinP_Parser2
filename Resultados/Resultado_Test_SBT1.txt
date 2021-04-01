@@ -1,0 +1,40 @@
+En linea: 6 se declaro Key: x tipo: 1 nivel: 0
+En linea: 7 se declaro Key: y tipo: 0 nivel: 0
+En linea: 8 se declaro Key: D tipo: 0 nivel: 0
+En linea: 13 se declaro Key: B tipo: 3 nivel: 1
+En linea: 15 se declaro Key: x tipo: 1 nivel: 0
+En linea: 16 se declaro Key: y tipo: 0 nivel: 0
+En linea:23 se uso Key: x tipo: 1 nivel: 0
+Error semantico, variable C no declarada en la linea 24
+Error semantico, variable SubSubD no declarada en la linea 25
+Error semantico, variable SubD no declarada en la linea 25
+En linea:25 se uso Key: D tipo: 0 nivel: 0
+Type error line 25 type Undefined missmatch Integer
+En linea:26 se uso Key: D tipo: 0 nivel: 0
+Error semantico, variable SubD no declarada en la linea 28
+En linea: 30 se declaro Key: C tipo: 3 nivel: 1
+En linea: 32 se declaro Key: x tipo: 1 nivel: 0
+En linea: 33 se declaro Key: B tipo: 2 nivel: 1
+En linea: 38 se declaro Key: C tipo: 0 nivel: 2
+En linea: 38 se declaro Key: D tipo: 3 nivel: 2
+En linea: 40 se declaro Key: y tipo: 0 nivel: 0
+En linea: 41 se declaro Key: A tipo: 0 nivel: 2
+En linea: 42 se declaro Key: B tipo: 2 nivel: 1
+En linea: 47 se declaro Key: SubDPar1 tipo: 0 nivel: 3
+En linea: 47 se declaro Key: SubDPar2 tipo: 2 nivel: 3
+En linea: 47 se declaro Key: SubD tipo: 3 nivel: 3
+En linea: 50 se declaro Key: DVar1 tipo: 0 nivel: 3
+En linea: 51 se declaro Key: DVar2 tipo: 2 nivel: 3
+En linea: 52 se declaro Key: DVar3 tipo: 1 nivel: 3
+En linea: 57 se declaro Key: SubDPar3 tipo: 0 nivel: 4
+En linea: 57 se declaro Key: SubDPar4 tipo: 2 nivel: 4
+En linea: 57 se declaro Key: SubSubD tipo: 3 nivel: 4
+En linea: 60 se declaro Key: DDVar1 tipo: 0 nivel: 4
+En linea: 61 se declaro Key: DDVar2 tipo: 2 nivel: 4
+En linea: 62 se declaro Key: DDVar3 tipo: 1 nivel: 4
+En linea:71 se uso Key: DDVar1 tipo: 0 nivel: 4
+En linea:71 se uso Key: DVar2 tipo: 2 nivel: 3
+En linea:73 se uso Key: DVar3 tipo: 1 nivel: 3
+Type error line 73 type String missmatch Real
+En linea:80 se uso Key: DVar1 tipo: 0 nivel: 3
+En linea:81 se uso Key: DVar2 tipo: 2 nivel: 3

@@ -1,0 +1,20 @@
+En linea: 5 se declaro Key: a tipo: 0 nivel: 0
+En linea: 6 se declaro Key: b tipo: 1 nivel: 0
+En linea: 7 se declaro Key: c tipo: 2 nivel: 0
+En linea: 8 se declaro Key: e tipo: 0 nivel: 0
+En linea: 13 se declaro Key: fooInt tipo: 0 nivel: 1
+En linea: 13 se declaro Key: fooReal tipo: 1 nivel: 1
+En linea: 13 se declaro Key: fooStr tipo: 2 nivel: 1
+En linea: 13 se declaro Key: Foo tipo: 3 nivel: 1
+En linea: 16 se declaro Key: localInt tipo: 0 nivel: 1
+En linea: 17 se declaro Key: localReal tipo: 1 nivel: 1
+En linea: 18 se declaro Key: localString tipo: 2 nivel: 1
+En linea: 19 se declaro Key: localArray tipo: 0 nivel: 1
+En linea: 20 se declaro Key: c tipo: 2 nivel: 0
+En linea: 21 se declaro Key: b tipo: 1 nivel: 0
+Error semantico, variable fooInt2 no declarada en la linea 28
+En linea:28 se uso Key: localInt tipo: 0 nivel: 1
+En linea:29 se uso Key: fooReal tipo: 1 nivel: 1
+En linea:29 se uso Key: localReal tipo: 1 nivel: 1
+Error semantico, variable LOCALSTRING no declarada en la linea 30
+Syntax Error on line 30

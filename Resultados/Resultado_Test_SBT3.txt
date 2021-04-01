@@ -1,0 +1,18 @@
+En linea: 4 se declaro Key: num1 tipo: 0 nivel: 0
+En linea: 5 se declaro Key: num2 tipo: 0 nivel: 0
+En linea: 6 se declaro Key: answer tipo: 0 nivel: 0
+En linea:12 se uso Key: num1 tipo: 0 nivel: 0
+En linea:13 se uso Key: num2 tipo: 0 nivel: 0
+En linea:14 se uso Key: answer tipo: 0 nivel: 0
+En linea:14 se uso Key: num1 tipo: 0 nivel: 0
+En linea:14 se uso Key: num2 tipo: 0 nivel: 0
+En linea:14 se uso Key: num1 tipo: 0 nivel: 0
+En linea:14 se uso Key: num2 tipo: 0 nivel: 0
+En linea:15 se uso Key: num1 tipo: 0 nivel: 0
+En linea:15 se uso Key: num2 tipo: 0 nivel: 0
+En linea:16 se uso Key: num2 tipo: 0 nivel: 0
+En linea:18 se uso Key: num2 tipo: 0 nivel: 0
+En linea:18 se uso Key: num1 tipo: 0 nivel: 0
+En linea:20 se uso Key: answer tipo: 0 nivel: 0
+En linea:21 se uso Key: answer tipo: 0 nivel: 0
+En linea:21 se uso Key: answer tipo: 0 nivel: 0
