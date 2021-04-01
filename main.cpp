@@ -11,11 +11,10 @@ int main()
 {
 
 
-  
+    //ofstream fstream;
 
     yyparse();
 
-    
 
     return 0;
 }

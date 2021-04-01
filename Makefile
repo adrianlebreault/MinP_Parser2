@@ -1,7 +1,12 @@
-default:
-	bison -yd parser.y
-	flex -l PI1Scanner.l
+all:
+	bison -yd parse.y
+	flex -l lexer.l
 	g++ -o test y.tab.c lex.yy.c main.cpp -lm
+
+test:
+	./test < Test_SBT2.txt > Resultado_Test_SBT2.txt
+	./test < Test_SBT3.txt > Resultado_Test_SBT3.txt
+	./test < Test_SBT1.txt > Resultado_Test_SBT1.txt
 
 clear:
 	rm -rf lex.yy.c
